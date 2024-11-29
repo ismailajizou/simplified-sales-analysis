@@ -10,7 +10,7 @@ import { SalesModule } from './sales/sales.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    MongooseModule.forRoot(process.env.MONGO_URI),
+    MongooseModule.forRoot(process.env.MONGODB_URI),
     ProductsModule,
     SalesModule,
     AnalyticsModule,
