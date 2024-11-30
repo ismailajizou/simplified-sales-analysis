@@ -101,5 +101,45 @@ export class AnalyticsService {
     return res;
   }
 
-  categorySales() {}
+  async categorySales() {
+    // get count of total sales
+    const totalSales = await this.saleModel.countDocuments();
+    // Retourne la répartition des ventes par catégorie,en indiquant le nombre de ventes, et le pourcentage
+    const res = await this.saleModel.aggregate([
+      {
+        // join with products (to access category on product)
+        $lookup: {
+          from: 'products',
+          localField: 'product',
+          foreignField: '_id',
+          as: 'productDetails',
+        },
+      },
+      {
+        // split the array into separate documents
+        $unwind: '$productDetails',
+      },
+      {
+        // group by category
+        $group: {
+          _id: '$productDetails.category',
+          // get the count of sales per category
+          count: { $sum: 1 },
+        },
+      },
+      {
+        // calculate the percentage
+        $addFields: {
+          percentage: {
+            // = (count / totalSales) * 100
+            $round: [
+              { $multiply: [{ $divide: ['$count', totalSales] }, 100] },
+              2, // number of decimal places
+            ],
+          },
+        },
+      },
+    ]);
+    return res;
+  }
 }
