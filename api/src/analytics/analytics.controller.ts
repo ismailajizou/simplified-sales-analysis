@@ -28,8 +28,8 @@ export class AnalyticsController {
   }
 
   @Get('trending_products')
-  async trendingProducts() {
-    return this.analyticsService.trendingProducts();
+  async trendingProducts(@Query('numberOfProducts') numberOfProducts = 3) {
+    return this.analyticsService.trendingProducts(+numberOfProducts);
   }
 
   @Get('category_sales')
