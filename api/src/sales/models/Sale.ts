@@ -15,7 +15,7 @@ export class Sale {
   quantity: number;
 
   @Prop()
-  date: Date;
+  date: string;
 
   @Prop()
   totalAmount: number;

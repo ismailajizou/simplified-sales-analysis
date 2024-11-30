@@ -35,7 +35,7 @@ export const migrate = async () => {
 
   await mongoose.connection.db.collection('products').insertMany(
     products.map((p) => ({
-      _id: p.ProductID,
+      _id: parseInt(p.ProductID),
       name: p.ProductName,
       category: p.Category,
       price: parseFloat(p.Price),
@@ -44,7 +44,7 @@ export const migrate = async () => {
 
   await mongoose.connection.db.collection('sales').insertMany(
     sales.map((s) => ({
-      _id: s.SaleID,
+      _id: parseInt(s.SaleID),
       product: parseInt(s.ProductID),
       quantity: parseInt(s.Quantity),
       date: s.Date,

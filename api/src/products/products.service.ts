@@ -12,16 +12,32 @@ export class ProductsService {
   ) {}
 
   async findAllWithSalesCount() {
-    // get products with count of sales
-    const products = await this.productModel.find();
-    const sales = await this.saleModel.find();
-
-    const productsWithSalesCount = products.map((product) => {
-      const salesCount = sales.filter(
-        (sale) => sale.product === product._id,
-      ).length;
-      return { ...product.toObject(), salesCount };
-    });
-    return productsWithSalesCount;
+    return this.productModel.aggregate([
+      {
+        // join the sales collection with the products collection (add salesData field that contains the sales data)
+        $lookup: {
+          from: 'sales',
+          localField: '_id',
+          foreignField: 'product',
+          as: 'salesData',
+        },
+      },
+      {
+        // add the total quantity sold and total sales for each product
+        $addFields: {
+          totalQuantitySold: { $sum: '$salesData.quantity' },
+          totalSales: { $sum: '$salesData.totalAmount' },
+        },
+      },
+      {
+        // remove the salesData field
+        $project: {
+          name: 1,
+          category: 1,
+          price: 1,
+          totalSales: 1,
+        },
+      },
+    ]);
   }
 }
