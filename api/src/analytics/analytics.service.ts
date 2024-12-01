@@ -4,6 +4,11 @@ import { format } from 'date-fns';
 import { Model } from 'mongoose';
 import { Product } from 'src/products/models/Product';
 import { Sale } from 'src/sales/models/Sale';
+import {
+  ICategorySalesReturn,
+  ITotalSalesReturn,
+  ITrendingProductsReturn,
+} from './types';
 
 @Injectable()
 export class AnalyticsService {
@@ -21,7 +26,7 @@ export class AnalyticsService {
   async totalSales(
     startDate?: string,
     endDate?: string,
-  ): Promise<{ total: number }> {
+  ): Promise<ITotalSalesReturn> {
     const res = await this.saleModel.aggregate([
       {
         // filter by date
@@ -49,10 +54,27 @@ export class AnalyticsService {
   /**
    * Return top X selling products by the sales quantity
    * @param numberOfProducts - number of products to return
+   * @param startDate - start date
+   * @param endDate - end date
    * @returns top selling products
    */
-  async trendingProducts(numberOfProducts: number) {
-    const res = await this.productModel.aggregate([
+  async trendingProducts(
+    numberOfProducts: number,
+    startDate?: string,
+    endDate?: string,
+  ): Promise<ITrendingProductsReturn> {
+    const res: ITrendingProductsReturn = await this.productModel.aggregate([
+      {
+        $match: {
+          // filter by date
+          date: {
+            // if no end date is provided, grab everyting before start date
+            $gte: endDate ? endDate : format(new Date(0), 'yyyy-MM-dd'),
+            // if no start date is provided, use today
+            $lte: startDate ? startDate : format(new Date(), 'yyyy-MM-dd'),
+          },
+        },
+      },
       {
         $lookup: {
           from: 'sales',
@@ -92,7 +114,6 @@ export class AnalyticsService {
         // project only the fields we want
         $project: {
           name: 1,
-          // get quantity from sales
           quantity: 1,
           totalSales: 1,
         },
@@ -101,11 +122,38 @@ export class AnalyticsService {
     return res;
   }
 
-  async categorySales() {
+  /**
+   * Get the sales by category
+   * @param startDate - start date
+   * @param endDate - end date
+   * @returns sales by category
+   */
+  async categorySales(
+    startDate?: string,
+    endDate?: string,
+  ): Promise<ICategorySalesReturn> {
     // get count of total sales
-    const totalSales = await this.saleModel.countDocuments();
+    const totalSales = await this.saleModel.countDocuments({
+      date: {
+        // if no end date is provided, grab everyting before start date
+        $gte: endDate ? endDate : format(new Date(0), 'yyyy-MM-dd'),
+        // if no start date is provided, use today
+        $lte: startDate ? startDate : format(new Date(), 'yyyy-MM-dd'),
+      },
+    });
     // Retourne la répartition des ventes par catégorie,en indiquant le nombre de ventes, et le pourcentage
-    const res = await this.saleModel.aggregate([
+    const res: ICategorySalesReturn = await this.saleModel.aggregate([
+      {
+        // filter by date
+        $match: {
+          date: {
+            // if no end date is provided, grab everyting before start date
+            $gte: endDate ? endDate : format(new Date(0), 'yyyy-MM-dd'),
+            // if no start date is provided, use today
+            $lte: startDate ? startDate : format(new Date(), 'yyyy-MM-dd'),
+          },
+        },
+      },
       {
         // join with products (to access category on product)
         $lookup: {
