@@ -1,10 +1,14 @@
 <template>
   <div class="container mx-auto p-6">
-    <div class="mb-6 flex justify-between">
-      <h1 class="text-2xl font-bold">E-Commerce Analytics Dashboard</h1>
+    <div
+      class="mb-6 flex md:justify-between justify-start flex-col md:flex-row gap-4"
+    >
+      <h1 class="text-2xl font-bold text-center md:text-left">
+        E-Commerce Analytics Dashboard
+      </h1>
 
       <!-- Time Period Filters -->
-      <div class="flex gap-2">
+      <div class="flex gap-2 flex-row-reverse md:flex-row">
         <template v-if="selectedPeriod === 'custom'">
           <DateRangePicker />
         </template>
@@ -25,16 +29,18 @@
       </div>
     </div>
 
-    <main class="grid grid-cols-2 grid-rows-5 gap-6">
+    <main
+      class="md:grid md:grid-cols-2 md:grid-rows-5 md:gap-6 flex flex-col gap-4"
+    >
       <TotalSalesCard />
 
-      <div class="row-span-2">
+      <div class="md:row-span-2">
         <TrendingProductsTable :number-of-top-products="numberOfTopProducts" />
       </div>
-      <div class="row-span-4">
+      <div class="md:row-span-4">
         <AllProductsTable />
       </div>
-      <div class="row-span-3">
+      <div class="md:row-span-3">
         <CategorySalesPieChart />
       </div>
     </main>
@@ -74,7 +80,6 @@ const selectedPeriod = ref<Timeframe>("30days");
 const formatDate = (date: string) => format(date, "yyyy-MM-dd");
 
 const { state: range, setStart, setEnd } = useTimeframeStore();
-
 
 const numberOfTopProducts = ref(3);
 watch(selectedPeriod, (value) => {
