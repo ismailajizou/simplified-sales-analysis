@@ -1,5 +1,21 @@
-# Vue 3 + TypeScript + Vite
+# Documentation
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+This project is the frontend of the 'Ecommerce Analytics Dashboard'. The project is built using Vue.js and tailwindcss. The project is a dashboard that displays the analytics of an ecommerce website. The dashboard displays the following analytics:
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+- Total Revenue (for a selected period)
+- Products with sales (paginated)
+- Trending products (for a selected period)
+- Sales by category (for a selected period)
+
+## Installation
+
+View the root README.md for installation instructions.
+
+## Technologies
+
+- Vue.js
+- Tailwindcss
+- Shadcn-vue
+- TypeScript
+- Pinia
+- Vue-query
