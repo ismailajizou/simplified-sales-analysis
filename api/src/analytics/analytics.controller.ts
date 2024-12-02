@@ -8,13 +8,13 @@ export class AnalyticsController {
   @ApiQuery({
     name: 'startDate',
     required: false,
-    description: 'Start date: defaults to today',
+    description: 'Start date',
     format: 'yyyy-MM-dd',
   })
   @ApiQuery({
     name: 'endDate',
     required: false,
-    description: 'End date',
+    description: 'End date: defaults to today',
     format: 'yyyy-MM-dd',
   })
   @Get('total_sales')
@@ -33,23 +33,23 @@ export class AnalyticsController {
   @ApiQuery({
     name: 'startDate',
     required: false,
-    description: 'Start date: defaults to today',
+    description: 'Start date',
     format: 'yyyy-MM-dd',
   })
   @ApiQuery({
     name: 'endDate',
     required: false,
-    description: 'End date',
+    description: 'End date: defaults to today',
     format: 'yyyy-MM-dd',
   })
   @Get('trending_products')
   async trendingProducts(
-    @Query('numberOfProducts') numberOfProducts = 3,
+    @Query('numberOfProducts') numberOfProducts = '3',
     @Query('startDate') startDate?: string,
     @Query('endDate') endDate?: string,
   ) {
     return this.analyticsService.trendingProducts(
-      numberOfProducts,
+      parseInt(numberOfProducts, 10),
       startDate,
       endDate,
     );
@@ -58,13 +58,13 @@ export class AnalyticsController {
   @ApiQuery({
     name: 'startDate',
     required: false,
-    description: 'Start date: defaults to today',
+    description: 'Start date',
     format: 'yyyy-MM-dd',
   })
   @ApiQuery({
     name: 'endDate',
     required: false,
-    description: 'End date',
+    description: 'End date: defaults to today',
     format: 'yyyy-MM-dd',
   })
   @Get('category_sales')

@@ -20,6 +20,8 @@ export class ProductsService {
     page: number,
     limit: number,
   ): Promise<IFindProductsWithSalesCount> {
+    // get total pages
+    const total = await this.productModel.countDocuments();
     const data = await this.productModel.aggregate([
       {
         // skip and limit
@@ -60,6 +62,8 @@ export class ProductsService {
       pageNumber: page,
       next: data.length > limit,
       previous: page > 1,
+      totalPages: Math.ceil(total / limit),
+      totalResults: total,
     };
   }
 }

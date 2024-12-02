@@ -8,4 +8,6 @@ export interface IFindProductsWithSalesCount {
   pageNumber: number;
   next: boolean;
   previous: boolean;
+  totalPages: number;
+  totalResults: number;
 }

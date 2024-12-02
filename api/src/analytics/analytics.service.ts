@@ -32,10 +32,8 @@ export class AnalyticsService {
         // filter by date
         $match: {
           date: {
-            // if no end date is provided, grab everyting before start date
-            $gte: endDate ? endDate : format(new Date(0), 'yyyy-MM-dd'),
-            // if no start date is provided, use today
-            $lte: startDate ? startDate : format(new Date(), 'yyyy-MM-dd'),
+            $gte: startDate ? startDate : format(new Date(0), 'yyyy-MM-dd'),
+            $lte: endDate ? endDate : format(new Date(), 'yyyy-MM-dd'),
           },
         },
       },
@@ -65,22 +63,20 @@ export class AnalyticsService {
   ): Promise<ITrendingProductsReturn> {
     const res: ITrendingProductsReturn = await this.productModel.aggregate([
       {
-        $match: {
-          // filter by date
-          date: {
-            // if no end date is provided, grab everyting before start date
-            $gte: endDate ? endDate : format(new Date(0), 'yyyy-MM-dd'),
-            // if no start date is provided, use today
-            $lte: startDate ? startDate : format(new Date(), 'yyyy-MM-dd'),
-          },
-        },
-      },
-      {
         $lookup: {
           from: 'sales',
           localField: '_id',
           foreignField: 'product',
           as: 'sales',
+        },
+      },
+      {
+        // filter by date
+        $match: {
+          'sales.date': {
+            $gte: startDate ? startDate : format(new Date(0), 'yyyy-MM-dd'),
+            $lte: endDate ? endDate : format(new Date(), 'yyyy-MM-dd'),
+          },
         },
       },
       // calculate total sales
@@ -135,10 +131,8 @@ export class AnalyticsService {
     // get count of total sales
     const totalSales = await this.saleModel.countDocuments({
       date: {
-        // if no end date is provided, grab everyting before start date
-        $gte: endDate ? endDate : format(new Date(0), 'yyyy-MM-dd'),
-        // if no start date is provided, use today
-        $lte: startDate ? startDate : format(new Date(), 'yyyy-MM-dd'),
+        $gte: startDate ? startDate : format(new Date(0), 'yyyy-MM-dd'),
+        $lte: endDate ? endDate : format(new Date(), 'yyyy-MM-dd'),
       },
     });
     // Retourne la répartition des ventes par catégorie,en indiquant le nombre de ventes, et le pourcentage
@@ -147,10 +141,8 @@ export class AnalyticsService {
         // filter by date
         $match: {
           date: {
-            // if no end date is provided, grab everyting before start date
-            $gte: endDate ? endDate : format(new Date(0), 'yyyy-MM-dd'),
-            // if no start date is provided, use today
-            $lte: startDate ? startDate : format(new Date(), 'yyyy-MM-dd'),
+            $gte: startDate ? startDate : format(new Date(0), 'yyyy-MM-dd'),
+            $lte: endDate ? endDate : format(new Date(), 'yyyy-MM-dd'),
           },
         },
       },
